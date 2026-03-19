@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prateek Prajapati | Fitness & Tech</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+        
+        .font-display {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        
+        /* Grain Texture Overlay */
+        .grain-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+        
+        /* Custom Cursor */
+        .custom-cursor {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 10000;
+            transition: transform 0.2s, background 0.2s;
+            mix-blend-mode: difference;
+        }
+        
+        .custom-cursor.hover {
+            transform: scale(2);
+            background: #fff;
+        }
+        
+        /* Hero Section */
+        .hero-section {
+            min-height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .hero-bg-text {
+            position: absolute;
+            font-size: 20vw;
+            font-weight: 700;
+            color: transparent;
+            -webkit-text-stroke: 1px rgba(255,255,255,0.1);
+            white-space: nowrap;
+            z-index: 0;
+            user-select: none;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+        }
+        
+        .glitch-text {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .glitch-text::before,
+        .glitch-text::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .glitch-text::before {
+            left: 2px;
+            text-shadow: -2px 0 #ff00ff;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim 5s infinite linear alternate-reverse;
+        }
+        
+        .glitch-text::after {
+            left: -2px;
+            text-shadow: -2px 0 #00ffff;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim2 5s infinite linear alternate-reverse;
+        }
+        
+        @keyframes glitch-anim {
+            0% { clip: rect(31px, 9999px, 94px, 0); }
+            20% { clip: rect(78px, 9999px, 23px, 0); }
+            40% { clip: rect(12px, 9999px, 67px, 0); }
+            60% { clip: rect(89px, 9999px, 12px, 0); }
+            80% { clip: rect(45px, 9999px, 78px, 0); }
+            100% { clip: rect(23px, 9999px, 56px, 0); }
+        }
+        
+        @keyframes glitch-anim2 {
+            0% { clip: rect(65px, 9999px, 34px, 0); }
+            20% { clip: rect(12px, 9999px, 89px, 0); }
+            40% { clip: rect(78px, 9999px, 12px, 0); }
+            60% { clip: rect(34px, 9999px, 67px, 0); }
+            80% { clip: rect(89px, 9999px, 23px, 0); }
+            100% { clip: rect(56px, 9999px, 45px, 0); }
+        }
+        
+        /* Gallery Section */
+        .gallery-section {
+            padding: 10rem 0;
+            position: relative;
+        }
+        
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .gallery-item:hover {
+            transform: scale(1.02);
+        }
+        
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(100%) contrast(1.2);
+            transition: filter 0.6s, transform 0.6s;
+        }
+        
+        .gallery-item:hover img {
+            filter: grayscale(0%) contrast(1.1);
+            transform: scale(1.1);
+        }
+        
+        .gallery-item::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+        
+        .gallery-item:hover::after {
+            opacity: 1;
+        }
+        
+        .item-1 { grid-column: 1 / 7; grid-row: 1 / 3; height: 600px; }
+        .item-2 { grid-column: 7 / 13; grid-row: 1 / 2; height: 290px; }
+        .item-3 { grid-column: 7 / 10; grid-row: 2 / 3; height: 290px; }
+        .item-4 { grid-column: 10 / 13; grid-row: 2 / 3; height: 290px; }
+        .item-5 { grid-column: 1 / 13; grid-row: 3 / 4; height: 500px; margin-top: 2rem; }
+        
+        /* About Section */
+        .about-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 6rem 0;
+            position: relative;
+        }
+        
+        .marquee-container {
+            position: absolute;
+            width: 100%;
+            overflow: hidden;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+        
+        .marquee-content {
+            display: flex;
+            animation: marquee 20s linear infinite;
+            white-space: nowrap;
+        }
+        
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        
+        .marquee-text {
+            font-size: 15vw;
+            font-weight: 700;
+            padding: 0 2rem;
+            -webkit-text-stroke: 2px #fff;
+            color: transparent;
+        }
+        
+        /* Contact Section */
+        .contact-section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            padding: 4rem;
+        }
+        
+        .magnetic-btn {
+            position: relative;
+            padding: 2rem 4rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+            background: transparent;
+            border: 2px solid #fff;
+            color: #fff;
+            cursor: pointer;
+            overflow: hidden;
+            transition: color 0.4s;
+        }
+        
+        .magnetic-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: -1;
+        }
+        
+        .magnetic-btn:hover::before {
+            transform: translateY(0);
+        }
+        
+        .magnetic-btn:hover {
+            color: #000;
+        }
+        
+        /* Navigation */
+        .nav-fixed {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 2rem;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            mix-blend-mode: difference;
+        }
+        
+        .nav-link {
+            color: #fff;
+            text-decoration: none;
+            font-size: 0.875rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: #fff;
+            transform: translateX(-100%);
+            transition: transform 0.3s;
+        }
+        
+        .nav-link:hover::after {
+            transform: translateX(0);
+        }
+        
+        /* Scroll Progress */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #ff00ff, #00ffff);
+            z-index: 10001;
+            transform-origin: left;
+            transform: scaleX(0);
+        }
+        
+        /* Stats Counter */
+        .stat-number {
+            font-size: 4rem;
+            font-weight: 700;
+            line-height: 1;
+            background: linear-gradient(135deg, #fff 0%, #888 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .gallery-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            .item-1, .item-2, .item-3, .item-4, .item-5 {
+                grid-column: 1;
+                height: 400px;
+            }
+            .hero-bg-text {
+                font-size: 30vw;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Grain Overlay -->
+    <div class="grain-overlay"></div>
+    
+    <!-- Custom Cursor -->
+    <div class="custom-cursor" id="cursor"></div>
+    
+    <!-- Scroll Progress -->
+    <div class="scroll-progress" id="scrollProgress"></div>
+
+    <!-- Navigation -->
+    <nav class="nav-fixed">
+        <div class="font-display text-2xl font-bold tracking-tighter">PP</div>
+        <div class="flex gap-8">
+            <a href="#work" class="nav-link">Work</a>
+            <a href="#about" class="nav-link">About</a>
+            <a href="#contact" class="nav-link">Contact</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-bg-text font-display" id="bgText">PRATEEK</div>
+        <div class="hero-content">
+            <p class="text-sm tracking-[0.3em] uppercase mb-4 opacity-70">Fitness Enthusiast & Developer</p>
+            <h1 class="font-display text-6xl md:text-8xl lg:text-9xl font-bold mb-6 glitch-text" data-text="PRATEEK">
+                PRATEEK
+            </h1>
+            <h2 class="font-display text-4xl md:text-6xl lg:text-7xl font-light text-gray-400 mb-8">
+                PRAJAPATI
+            </h2>
+            <div class="flex justify-center gap-4 mt-12">
+                <span class="px-4 py-2 border border-white/20 rounded-full text-xs tracking-widest uppercase">Discipline</span>
+                <span class="px-4 py-2 border border-white/20 rounded-full text-xs tracking-widest uppercase">Strength</span>
+                <span class="px-4 py-2 border border-white/20 rounded-full text-xs tracking-widest uppercase">Growth</span>
+            </div>
+        </div>
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section class="gallery-section" id="work">
+        <div class="max-w-7xl mx-auto px-6 mb-16">
+            <h2 class="font-display text-5xl md:text-7xl font-bold mb-4">THE JOURNEY</h2>
+            <p class="text-gray-400 text-lg max-w-2xl">Transforming potential into power. Every rep counts, every day matters.</p>
+        </div>
+        
+        <div class="gallery-grid">
+            <div class="gallery-item item-1" data-speed="0.8">
+                <img src="/mnt/kimi/upload/71775.jpg" alt="Fitness Progress 1">
+                <div class="absolute bottom-0 left-0 p-8 z-10 opacity-0 transition-opacity duration-300 gallery-caption">
+                    <h3 class="font-display text-2xl font-bold">The Foundation</h3>
+                    <p class="text-sm text-gray-300 mt-2">Building from the ground up</p>
+                </div>
+            </div>
+            <div class="gallery-item item-2" data-speed="1.2">
+                <img src="/mnt/kimi/upload/71774.jpg" alt="Fitness Progress 2">
+                <div class="absolute bottom-0 left-0 p-6 z-10 opacity-0 transition-opacity duration-300 gallery-caption">
+                    <h3 class="font-display text-xl font-bold">Consistency</h3>
+                </div>
+            </div>
+            <div class="gallery-item item-3" data-speed="1.0">
+                <img src="/mnt/kimi/upload/71773.jpg" alt="Fitness Progress 3">
+                <div class="absolute bottom-0 left-0 p-6 z-10 opacity-0 transition-opacity duration-300 gallery-caption">
+                    <h3 class="font-display text-xl font-bold">Discipline</h3>
+                </div>
+            </div>
+            <div class="gallery-item item-4" data-speed="1.1">
+                <img src="/mnt/kimi/upload/71759.jpg" alt="Fitness Progress 4">
+                <div class="absolute bottom-0 left-0 p-6 z-10 opacity-0 transition-opacity duration-300 gallery-caption">
+                    <h3 class="font-display text-xl font-bold">Power</h3>
+                </div>
+            </div>
+            <div class="gallery-item item-5" data-speed="0.9">
+                <img src="/mnt/kimi/upload/70669.jpg" alt="Professional">
+                <div class="absolute bottom-0 left-0 p-8 z-10 opacity-0 transition-opacity duration-300 gallery-caption">
+                    <h3 class="font-display text-3xl font-bold">The Professional</h3>
+                    <p class="text-gray-300 mt-2">Balancing mind and muscle</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about-section" id="about">
+        <div class="marquee-container top-1/2 -translate-y-1/2">
+            <div class="marquee-content">
+                <span class="marquee-text font-display">ABOUT</span>
+                <span class="marquee-text font-display">ABOUT</span>
+                <span class="marquee-text font-display">ABOUT</span>
+                <span class="marquee-text font-display">ABOUT</span>
+            </div>
+        </div>
+        
+        <div class="max-w-6xl mx-auto px-6 relative z-10 grid md:grid-cols-2 gap-16 items-center">
+            <div>
+                <h2 class="font-display text-5xl md:text-7xl font-bold mb-8 leading-tight">
+                    DUALITY OF<br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400">EXCELLENCE</span>
+                </h2>
+                <p class="text-gray-400 text-lg leading-relaxed mb-6">
+                    I believe in the synergy between physical strength and intellectual growth. As a developer and fitness enthusiast, I bring the same discipline from the gym to the codebase.
+                </p>
+                <p class="text-gray-400 text-lg leading-relaxed mb-8">
+                    Every project is a new personal record. Every challenge is a set to be completed. No shortcuts, no excuses—just consistent progress.
+                </p>
+                
+                <div class="grid grid-cols-3 gap-8 mt-12">
+                    <div>
+                        <div class="stat-number" data-target="100">0</div>
+                        <div class="text-xs uppercase tracking-widest text-gray-500 mt-2">Dedication</div>
+                    </div>
+                    <div>
+                        <div class="stat-number" data-target="24">0</div>
+                        <div class="text-xs uppercase tracking-widest text-gray-500 mt-2">Hours</div>
+                    </div>
+                    <div>
+                        <div class="stat-number" data-target="365">0</div>
+                        <div class="text-xs uppercase tracking-widest text-gray-500 mt-2">Days/Year</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="relative">
+                <div class="absolute inset-0 bg-gradient-to-tr from-purple-600/20 to-cyan-600/20 rounded-2xl blur-3xl"></div>
+                <div class="relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8">
+                    <h3 class="font-display text-2xl font-bold mb-6">Current Focus</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-center gap-4">
+                            <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                            <span class="text-gray-300">Full Stack Development</span>
+                        </li>
+                        <li class="flex items-center gap-4">
+                            <div class="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+                            <span class="text-gray-300">Strength Training</span>
+                        </li>
+                        <li class="flex items-center gap-4">
+                            <div class="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></div>
+                            <span class="text-gray-300">Continuous Learning</span>
+                        </li>
+                        <li class="flex items-center gap-4">
+                            <div class="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
+                            <span class="text-gray-300">Personal Growth</span>
+                        </li>
+                    </ul>
+                    
+                    <div class="mt-8 pt-8 border-t border-white/10">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-sm text-gray-400">Current Goal Progress</span>
+                            <span class="text-sm font-bold">85%</span>
+                        </div>
+                        <div class="h-2 bg-white/10 rounded-full overflow-hidden">
+                            <div class="h-full bg-gradient-to-r from-purple-500 to-cyan-500 rounded-full" style="width: 85%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact-section" id="contact">
+        <div class="text-center mb-16">
+            <p class="text-sm tracking-[0.3em] uppercase mb-4 text-gray-500">Ready to connect?</p>
+            <h2 class="font-display text-6xl md:text-8xl font-bold mb-8">LET'S TALK</h2>
+        </div>
+        
+        <button class="magnetic-btn font-display" id="contactBtn">
+            GET IN TOUCH
+        </button>
+        
+        <div class="mt-20 flex gap-8 text-sm text-gray-500">
+            <a href="#" class="hover:text-white transition-colors">Instagram</a>
+            <a href="#" class="hover:text-white transition-colors">LinkedIn</a>
+            <a href="#" class="hover:text-white transition-colors">GitHub</a>
+            <a href="#" class="hover:text-white transition-colors">Twitter</a>
+        </div>
+        
+        <div class="absolute bottom-8 left-8 text-xs text-gray-600">
+            © 2024 Prateek Prajapati. All rights reserved.
+        </div>
+    </section>
+
+    <script>
+        // Register GSAP
+        gsap.registerPlugin(ScrollTrigger);
+        
+        // Custom Cursor
+        const cursor = document.getElementById('cursor');
+        const isTouchDevice = window.matchMedia('(pointer: coarse)').matches;
+        
+        if (!isTouchDevice) {
+            document.addEventListener('mousemove', (e) => {
+                cursor.style.left = e.clientX - 10 + 'px';
+                cursor.style.top = e.clientY - 10 + 'px';
+            });
+            
+            document.querySelectorAll('a, button, .gallery-item').forEach(el => {
+                el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+                el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+            });
+        } else {
+            cursor.style.display = 'none';
+        }
+        
+        // Scroll Progress
+        const scrollProgress = document.getElementById('scrollProgress');
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollPercent = scrollTop / docHeight;
+            scrollProgress.style.transform = `scaleX(${scrollPercent})`;
+        });
+        
+        // Hero Parallax
+        gsap.to('#bgText', {
+            scrollTrigger: {
+                trigger: '.hero-section',
+                start: 'top top',
+                end: 'bottom top',
+                scrub: 1
+            },
+            x: -200,
+            opacity: 0.3
+        });
+        
+        // Gallery Items Animation
+        gsap.utils.toArray('.gallery-item').forEach((item, i) => {
+            gsap.from(item, {
+                scrollTrigger: {
+                    trigger: item,
+                    start: 'top 80%',
+                    toggleActions: 'play none none reverse'
+                },
+                y: 100,
+                opacity: 0,
+                duration: 1,
+                delay: i * 0.1,
+                ease: 'power3.out'
+            });
+            
+            // Parallax effect on scroll
+            const speed = item.dataset.speed || 1;
+            gsap.to(item, {
+                scrollTrigger: {
+                    trigger: item,
+                    start: 'top bottom',
+                    end: 'bottom top',
+                    scrub: 1
+                },
+                y: (1 - speed) * 100
+            });
+        });
+        
+        // Show captions on hover
+        document.querySelectorAll('.gallery-item').forEach(item => {
+            item.addEventListener('mouseenter', () => {
+                item.querySelector('.gallery-caption').style.opacity = '1';
+            });
+            item.addEventListener('mouseleave', () => {
+                item.querySelector('.gallery-caption').style.opacity = '0';
+            });
+        });
+        
+        // Stats Counter Animation
+        const stats = document.querySelectorAll('.stat-number');
+        stats.forEach(stat => {
+            const target = parseInt(stat.dataset.target);
+            gsap.to(stat, {
+                scrollTrigger: {
+                    trigger: stat,
+                    start: 'top 80%',
+                    toggleActions: 'play none none reverse'
+                },
+                innerHTML: target,
+                duration: 2,
+                snap: { innerHTML: 1 },
+                ease: 'power2.out'
+            });
+        });
+        
+        // Magnetic Button Effect
+        const contactBtn = document.getElementById('contactBtn');
+        if (!isTouchDevice) {
+            contactBtn.addEventListener('mousemove', (e) => {
+                const rect = contactBtn.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                
+                gsap.to(contactBtn, {
+                    x: x * 0.3,
+                    y: y * 0.3,
+                    duration: 0.3,
+                    ease: 'power2.out'
+                });
+            });
+            
+            contactBtn.addEventListener('mouseleave', () => {
+                gsap.to(contactBtn, {
+                    x: 0,
+                    y: 0,
+                    duration: 0.5,
+                    ease: 'elastic.out(1, 0.3)'
+                });
+            });
+        }
+        
+        contactBtn.addEventListener('click', () => {
+            alert('Contact feature coming soon! Add your email here.');
+        });
+        
+        // Smooth Scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    gsap.to(window, {
+                        duration: 1,
+                        scrollTo: { y: target, offsetY: 0 },
+                        ease: 'power3.inOut'
+                    });
+                }
+            });
+        });
+        
+        // Text Reveal Animation for About Section
+        gsap.from('.about-section h2', {
+            scrollTrigger: {
+                trigger: '.about-section',
+                start: 'top 70%',
+                toggleActions: 'play none none reverse'
+            },
+            y: 100,
+            opacity: 0,
+            duration: 1,
+            ease: 'power3.out'
+        });
+        
+        // Glitch effect randomization
+        setInterval(() => {
+            const glitchText = document.querySelector('.glitch-text');
+            glitchText.style.animation = 'none';
+            setTimeout(() => {
+                glitchText.style.animation = '';
+            }, 10);
+        }, 5000);
+    </script>
+</body>
+</html>
