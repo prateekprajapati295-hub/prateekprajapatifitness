@@ -717,3 +717,689 @@
 <button onclick="window.open('mailto: prateekprajapati295@gmail.com')">
   Email Me
 </button>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prateek Fitness | Transform Your Body</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #0a0a0a; color: #ffffff; overflow-x: hidden; }
+        .font-display { font-family: 'Space Grotesk', sans-serif; }
+        
+        /* Grain Texture */
+        .grain-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 9999; opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+        
+        /* Custom Cursor */
+        .custom-cursor {
+            width: 20px; height: 20px; border: 2px solid #fff; border-radius: 50%;
+            position: fixed; pointer-events: none; z-index: 10000;
+            transition: transform 0.2s, background 0.2s; mix-blend-mode: difference;
+        }
+        .custom-cursor.hover { transform: scale(2); background: #fff; }
+        
+        /* Hero Section */
+        .hero-section {
+            min-height: 100vh; position: relative; display: flex;
+            align-items: center; justify-content: center; overflow: hidden;
+        }
+        .hero-bg-text {
+            position: absolute; font-size: 20vw; font-weight: 700;
+            color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.1);
+            white-space: nowrap; z-index: 0; user-select: none;
+        }
+        .hero-content { position: relative; z-index: 10; text-align: center; }
+        
+        /* Glitch Effect */
+        .glitch-text { position: relative; display: inline-block; }
+        .glitch-text::before, .glitch-text::after {
+            content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        }
+        .glitch-text::before {
+            left: 2px; text-shadow: -2px 0 #ff00ff;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim 5s infinite linear alternate-reverse;
+        }
+        .glitch-text::after {
+            left: -2px; text-shadow: -2px 0 #00ffff;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim2 5s infinite linear alternate-reverse;
+        }
+        @keyframes glitch-anim {
+            0% { clip: rect(31px, 9999px, 94px, 0); } 20% { clip: rect(78px, 9999px, 23px, 0); }
+            40% { clip: rect(12px, 9999px, 67px, 0); } 60% { clip: rect(89px, 9999px, 12px, 0); }
+            80% { clip: rect(45px, 9999px, 78px, 0); } 100% { clip: rect(23px, 9999px, 56px, 0); }
+        }
+        @keyframes glitch-anim2 {
+            0% { clip: rect(65px, 9999px, 34px, 0); } 20% { clip: rect(12px, 9999px, 89px, 0); }
+            40% { clip: rect(78px, 9999px, 12px, 0); } 60% { clip: rect(34px, 9999px, 67px, 0); }
+            80% { clip: rect(89px, 9999px, 23px, 0); } 100% { clip: rect(56px, 9999px, 45px, 0); }
+        }
+        
+        /* Gallery */
+        .gallery-item { position: relative; overflow: hidden; border-radius: 4px; cursor: pointer; }
+        .gallery-item img {
+            width: 100%; height: 100%; object-fit: cover;
+            filter: grayscale(100%) contrast(1.2); transition: filter 0.6s, transform 0.6s;
+        }
+        .gallery-item:hover img { filter: grayscale(0%) contrast(1.1); transform: scale(1.1); }
+        
+        /* Workout Section */
+        .workout-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 16px;
+            padding: 2rem; transition: all 0.3s; cursor: pointer;
+        }
+        .workout-card:hover { transform: translateY(-5px); border-color: rgba(255,255,255,0.3); }
+        .workout-card.active { border-color: #00ffff; background: rgba(0,255,255,0.05); }
+        
+        /* Gender Toggle */
+        .gender-toggle {
+            display: flex; gap: 1rem; margin-bottom: 2rem;
+        }
+        .gender-btn {
+            padding: 1rem 3rem; border: 2px solid rgba(255,255,255,0.2);
+            background: transparent; color: #fff; border-radius: 50px;
+            cursor: pointer; transition: all 0.3s; font-weight: 600;
+        }
+        .gender-btn.active { background: #fff; color: #000; }
+        .gender-btn:hover { border-color: #fff; }
+        
+        /* Day Selector */
+        .day-selector {
+            display: flex; gap: 0.5rem; overflow-x: auto; padding: 1rem 0;
+        }
+        .day-btn {
+            min-width: 60px; padding: 1rem; border: 1px solid rgba(255,255,255,0.2);
+            background: transparent; color: #fff; border-radius: 12px;
+            cursor: pointer; transition: all 0.3s; text-align: center;
+        }
+        .day-btn.active { background: linear-gradient(135deg, #ff00ff, #00ffff); border-color: transparent; }
+        
+        /* Auth Modal */
+        .modal {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9);
+            z-index: 1000; justify-content: center; align-items: center;
+        }
+        .modal.active { display: flex; }
+        .modal-content {
+            background: #111; border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px; padding: 3rem; max-width: 450px; width: 90%;
+            position: relative;
+        }
+        .input-field {
+            width: 100%; padding: 1rem; margin: 0.5rem 0;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px; color: #fff; outline: none;
+        }
+        .input-field:focus { border-color: #00ffff; }
+        
+        /* Progress Tracker */
+        .progress-ring {
+            width: 120px; height: 120px; transform: rotate(-90deg);
+        }
+        .progress-ring-circle {
+            fill: none; stroke: rgba(255,255,255,0.1); stroke-width: 8;
+        }
+        .progress-ring-progress {
+            fill: none; stroke: url(#gradient); stroke-width: 8;
+            stroke-linecap: round; stroke-dasharray: 283; stroke-dashoffset: 283;
+            transition: stroke-dashoffset 1s;
+        }
+        
+        /* Scroll Progress */
+        .scroll-progress {
+            position: fixed; top: 0; left: 0; height: 3px;
+            background: linear-gradient(90deg, #ff00ff, #00ffff);
+            z-index: 10001; transform-origin: left; transform: scaleX(0);
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .hero-bg-text { font-size: 30vw; }
+            .gender-btn { padding: 0.8rem 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Grain Overlay -->
+    <div class="grain-overlay"></div>
+    
+    <!-- Custom Cursor -->
+    <div class="custom-cursor" id="cursor"></div>
+    
+    <!-- Scroll Progress -->
+    <div class="scroll-progress" id="scrollProgress"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 w-full p-6 z-50 flex justify-between items-center mix-blend-difference">
+        <div class="font-display text-2xl font-bold tracking-tighter">PP</div>
+        <div class="flex gap-8 items-center">
+            <a href="#workout" class="text-sm tracking-widest uppercase hover:text-gray-400 transition">Workouts</a>
+            <a href="#tracker" class="text-sm tracking-widest uppercase hover:text-gray-400 transition">Tracker</a>
+            <button onclick="openModal('login')" class="px-6 py-2 border border-white rounded-full text-sm hover:bg-white hover:text-black transition">Sign In</button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-bg-text font-display" id="bgText">PRATEEK</div>
+        <div class="hero-content px-4">
+            <p class="text-sm tracking-[0.3em] uppercase mb-4 opacity-70">Fitness Coach & Developer</p>
+            <h1 class="font-display text-6xl md:text-8xl lg:text-9xl font-bold mb-6 glitch-text" data-text="PRATEEK">PRATEEK</h1>
+            <h2 class="font-display text-4xl md:text-6xl lg:text-7xl font-light text-gray-400 mb-8">PRAJAPATI</h2>
+            <div class="flex justify-center gap-4 mt-12 flex-wrap">
+                <span class="px-4 py-2 border border-white/20 rounded-full text-xs tracking-widest uppercase">Discipline</span>
+                <span class="px-4 py-2 border border-white/20 rounded-full text-xs tracking-widest uppercase">Strength</span>
+                <span class="px-4 py-2 border border-white/20 rounded-full text-xs tracking-widest uppercase">Growth</span>
+            </div>
+            <div class="mt-12 flex justify-center gap-6">
+                <a href="https://instagram.com/prateek.prz" target="_blank" class="text-2xl hover:text-pink-500 transition"><i class="fab fa-instagram"></i></a>
+                <a href="https://www.linkedin.com/in/prateek-prajapati-5b12a5379" target="_blank" class="text-2xl hover:text-blue-500 transition"><i class="fab fa-linkedin"></i></a>
+                <a href="mailto:prateekprajapati295@gmail.com" class="text-2xl hover:text-red-500 transition"><i class="fas fa-envelope"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section class="py-32 px-6" id="gallery">
+        <div class="max-w-7xl mx-auto mb-16">
+            <h2 class="font-display text-5xl md:text-7xl font-bold mb-4">THE JOURNEY</h2>
+            <p class="text-gray-400 text-lg">Transforming potential into power. Every rep counts.</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
+            <div class="gallery-item h-96">
+                <img src="WIN_20251026_20_06_53_Pro.jpg" alt="Fitness Progress">
+                <div class="absolute bottom-0 left-0 p-6 bg-gradient-to-t from-black to-transparent w-full">
+                    <h3 class="font-display text-xl font-bold">The Foundation</h3>
+                </div>
+            </div>
+            <div class="gallery-item h-96">
+                <img src="WIN_20251031_19_46_50_Pro.jpg" alt="Fitness Progress">
+                <div class="absolute bottom-0 left-0 p-6 bg-gradient-to-t from-black to-transparent w-full">
+                    <h3 class="font-display text-xl font-bold">Consistency</h3>
+                </div>
+            </div>
+            <div class="gallery-item h-96">
+                <img src="WIN_20260203_19_54_58_Pro.jpg" alt="Fitness Progress">
+                <div class="absolute bottom-0 left-0 p-6 bg-gradient-to-t from-black to-transparent w-full">
+                    <h3 class="font-display text-xl font-bold">Discipline</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Workout Plans Section -->
+    <section class="py-32 px-6 bg-gradient-to-b from-transparent to-white/5" id="workout">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="font-display text-5xl md:text-7xl font-bold mb-4 text-center">WORKOUT PLANS</h2>
+            <p class="text-gray-400 text-center mb-12">Personalized plans for Boys & Girls</p>
+            
+            <!-- Gender Toggle -->
+            <div class="gender-toggle justify-center">
+                <button class="gender-btn active" onclick="selectGender('boys', this)">BOYS</button>
+                <button class="gender-btn" onclick="selectGender('girls', this)">GIRLS</button>
+            </div>
+            
+            <!-- Day Selector -->
+            <div class="day-selector justify-center mb-8" id="daySelector">
+                <!-- Days will be inserted by JS -->
+            </div>
+            
+            <!-- Workout Display -->
+            <div id="workoutDisplay" class="workout-card">
+                <div class="flex justify-between items-start mb-6">
+                    <div>
+                        <h3 class="font-display text-3xl font-bold mb-2" id="workoutTitle">Monday: Chest & Triceps</h3>
+                        <p class="text-gray-400" id="workoutSubtitle">Build upper body strength</p>
+                    </div>
+                    <span class="px-4 py-2 bg-white/10 rounded-full text-sm" id="workoutDuration">60 min</span>
+                </div>
+                
+                <div class="space-y-4" id="exerciseList">
+                    <!-- Exercises will be inserted by JS -->
+                </div>
+                
+                <button onclick="startWorkout()" class="w-full mt-8 py-4 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-xl font-bold text-lg hover:opacity-90 transition">
+                    START WORKOUT <i class="fas fa-arrow-right ml-2"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Body Tracker Section -->
+    <section class="py-32 px-6" id="tracker">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="font-display text-5xl md:text-7xl font-bold mb-4 text-center">BODY TRACKER</h2>
+            <p class="text-gray-400 text-center mb-12">Track your progress, celebrate gains</p>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Progress Rings -->
+                <div class="workout-card text-center">
+                    <h3 class="font-display text-2xl font-bold mb-8">Weekly Progress</h3>
+                    <div class="flex justify-around">
+                        <div>
+                            <svg class="progress-ring" viewBox="0 0 100 100">
+                                <defs>
+                                    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                        <stop offset="0%" style="stop-color:#ff00ff" />
+                                        <stop offset="100%" style="stop-color:#00ffff" />
+                                    </linearGradient>
+                                </defs>
+                                <circle class="progress-ring-circle" cx="50" cy="50" r="45"/>
+                                <circle class="progress-ring-progress" id="progress1" cx="50" cy="50" r="45"/>
+                            </svg>
+                            <p class="mt-4 font-bold">Workouts</p>
+                            <p class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400">4/7</p>
+                        </div>
+                        <div>
+                            <svg class="progress-ring" viewBox="0 0 100 100">
+                                <circle class="progress-ring-circle" cx="50" cy="50" r="45"/>
+                                <circle class="progress-ring-progress" id="progress2" cx="50" cy="50" r="45" style="stroke-dashoffset: 150;"/>
+                            </svg>
+                            <p class="mt-4 font-bold">Calories</p>
+                            <p class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400">85%</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Stats Form -->
+                <div class="workout-card">
+                    <h3 class="font-display text-2xl font-bold mb-6">Update Stats</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="text-sm text-gray-400">Weight (kg)</label>
+                            <input type="number" class="input-field" placeholder="Current weight" id="weightInput">
+                        </div>
+                        <div>
+                            <label class="text-sm text-gray-400">Body Fat %</label>
+                            <input type="number" class="input-field" placeholder="Body fat percentage" id="fatInput">
+                        </div>
+                        <div>
+                            <label class="text-sm text-gray-400">Muscle Mass (kg)</label>
+                            <input type="number" class="input-field" placeholder="Muscle mass" id="muscleInput">
+                        </div>
+                        <button onclick="saveStats()" class="w-full py-3 bg-white text-black rounded-xl font-bold hover:bg-gray-200 transition">
+                            SAVE PROGRESS
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- History Chart -->
+            <div class="workout-card mt-8">
+                <h3 class="font-display text-2xl font-bold mb-6">Progress History</h3>
+                <div class="h-64 flex items-end justify-between gap-2" id="chartContainer">
+                    <!-- Chart bars will be inserted by JS -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="py-32 px-6 text-center">
+        <h2 class="font-display text-5xl md:text-7xl font-bold mb-8">LET'S CONNECT</h2>
+        <p class="text-gray-400 mb-12 max-w-2xl mx-auto">Ready to start your fitness journey? Get in touch for personalized training programs.</p>
+        
+        <div class="flex justify-center gap-8 mb-12">
+            <a href="https://instagram.com/prateek.prz" target="_blank" class="group">
+                <div class="w-20 h-20 rounded-full border border-white/20 flex items-center justify-center text-3xl group-hover:bg-pink-500 group-hover:border-pink-500 transition">
+                    <i class="fab fa-instagram"></i>
+                </div>
+                <p class="mt-2 text-sm text-gray-400">@prateek.prz</p>
+            </a>
+            <a href="https://www.linkedin.com/in/prateek-prajapati-5b12a5379" target="_blank" class="group">
+                <div class="w-20 h-20 rounded-full border border-white/20 flex items-center justify-center text-3xl group-hover:bg-blue-500 group-hover:border-blue-500 transition">
+                    <i class="fab fa-linkedin-in"></i>
+                </div>
+                <p class="mt-2 text-sm text-gray-400">LinkedIn</p>
+            </a>
+            <a href="mailto:prateekprajapati295@gmail.com" class="group">
+                <div class="w-20 h-20 rounded-full border border-white/20 flex items-center justify-center text-3xl group-hover:bg-red-500 group-hover:border-red-500 transition">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <p class="mt-2 text-sm text-gray-400">Email</p>
+            </a>
+        </div>
+        
+        <p class="text-gray-600 text-sm">© 2024 Prateek Prajapati. All rights reserved.</p>
+    </section>
+
+    <!-- Login/Signup Modal -->
+    <div class="modal" id="authModal">
+        <div class="modal-content">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-2xl hover:text-gray-400">&times;</button>
+            
+            <div id="loginForm">
+                <h2 class="font-display text-3xl font-bold mb-6">Welcome Back</h2>
+                <input type="email" class="input-field" placeholder="Email" id="loginEmail">
+                <input type="password" class="input-field" placeholder="Password" id="loginPassword">
+                <button onclick="login()" class="w-full py-3 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-xl font-bold mb-4">SIGN IN</button>
+                <p class="text-center text-gray-400">Don't have an account? <button onclick="toggleAuth('signup')" class="text-white underline">Sign up</button></p>
+            </div>
+            
+            <div id="signupForm" style="display: none;">
+                <h2 class="font-display text-3xl font-bold mb-6">Create Account</h2>
+                <input type="text" class="input-field" placeholder="Full Name" id="signupName">
+                <input type="email" class="input-field" placeholder="Email" id="signupEmail">
+                <input type="password" class="input-field" placeholder="Password" id="signupPassword">
+                <select class="input-field" id="signupGender">
+                    <option value="">Select Gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                </select>
+                <button onclick="signup()" class="w-full py-3 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-xl font-bold mb-4">CREATE ACCOUNT</button>
+                <p class="text-center text-gray-400">Already have an account? <button onclick="toggleAuth('login')" class="text-white underline">Sign in</button></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Custom Cursor
+        const cursor = document.getElementById('cursor');
+        const isTouchDevice = window.matchMedia('(pointer: coarse)').matches;
+        
+        if (!isTouchDevice) {
+            document.addEventListener('mousemove', (e) => {
+                cursor.style.left = e.clientX - 10 + 'px';
+                cursor.style.top = e.clientY - 10 + 'px';
+            });
+            document.querySelectorAll('a, button, .gallery-item').forEach(el => {
+                el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+                el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+            });
+        } else {
+            cursor.style.display = 'none';
+        }
+        
+        // Scroll Progress
+        const scrollProgress = document.getElementById('scrollProgress');
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            scrollProgress.style.transform = `scaleX(${scrollTop / docHeight})`;
+        });
+        
+        // Workout Plans Data
+        const workoutPlans = {
+            boys: {
+                Monday: { title: "Chest & Triceps", duration: "60 min", exercises: [
+                    { name: "Push Ups", sets: "4 sets x 15 reps" },
+                    { name: "Bench Press", sets: "4 sets x 12 reps" },
+                    { name: "Incline Dumbbell Press", sets: "3 sets x 12 reps" },
+                    { name: "Tricep Dips", sets: "4 sets x 15 reps" },
+                    { name: "Cable Fly", sets: "3 sets x 15 reps" }
+                ]},
+                Tuesday: { title: "Back & Biceps", duration: "65 min", exercises: [
+                    { name: "Pull Ups", sets: "4 sets x 10 reps" },
+                    { name: "Deadlift", sets: "4 sets x 8 reps" },
+                    { name: "Barbell Rows", sets: "4 sets x 12 reps" },
+                    { name: "Bicep Curls", sets: "4 sets x 15 reps" },
+                    { name: "Lat Pulldown", sets: "3 sets x 12 reps" }
+                ]},
+                Wednesday: { title: "Legs & Core", duration: "70 min", exercises: [
+                    { name: "Squats", sets: "5 sets x 12 reps" },
+                    { name: "Leg Press", sets: "4 sets x 15 reps" },
+                    { name: "Lunges", sets: "3 sets x 20 reps" },
+                    { name: "Plank", sets: "4 sets x 1 min" },
+                    { name: "Leg Raises", sets: "4 sets x 20 reps" }
+                ]},
+                Thursday: { title: "Shoulders & Abs", duration: "55 min", exercises: [
+                    { name: "Overhead Press", sets: "4 sets x 12 reps" },
+                    { name: "Lateral Raises", sets: "4 sets x 15 reps" },
+                    { name: "Front Raises", sets: "3 sets x 12 reps" },
+                    { name: "Crunches", sets: "4 sets x 25 reps" },
+                    { name: "Russian Twists", sets: "3 sets x 30 reps" }
+                ]},
+                Friday: { title: "Arms & Cardio", duration: "50 min", exercises: [
+                    { name: "Hammer Curls", sets: "4 sets x 15 reps" },
+                    { name: "Skull Crushers", sets: "4 sets x 12 reps" },
+                    { name: "Preacher Curls", sets: "3 sets x 12 reps" },
+                    { name: "Running", sets: "20 minutes" },
+                    { name: "Jump Rope", sets: "10 minutes" }
+                ]},
+                Saturday: { title: "Full Body HIIT", duration: "45 min", exercises: [
+                    { name: "Burpees", sets: "4 sets x 15 reps" },
+                    { name: "Mountain Climbers", sets: "4 sets x 30 reps" },
+                    { name: "Box Jumps", sets: "3 sets x 12 reps" },
+                    { name: "Kettlebell Swings", sets: "4 sets x 20 reps" },
+                    { name: "Battle Ropes", sets: "4 sets x 1 min" }
+                ]},
+                Sunday: { title: "Rest & Recovery", duration: "30 min", exercises: [
+                    { name: "Light Stretching", sets: "15 minutes" },
+                    { name: "Yoga", sets: "15 minutes" },
+                    { name: "Foam Rolling", sets: "10 minutes" },
+                    { name: "Meditation", sets: "10 minutes" }
+                ]}
+            },
+            girls: {
+                Monday: { title: "Glutes & Legs", duration: "60 min", exercises: [
+                    { name: "Hip Thrusts", sets: "4 sets x 15 reps" },
+                    { name: "Squats", sets: "4 sets x 15 reps" },
+                    { name: "Lunges", sets: "3 sets x 20 reps" },
+                    { name: "Glute Kickbacks", sets: "4 sets x 15 reps" },
+                    { name: "Sumo Deadlifts", sets: "3 sets x 12 reps" }
+                ]},
+                Tuesday: { title: "Upper Body Toning", duration: "55 min", exercises: [
+                    { name: "Push Ups", sets: "3 sets x 12 reps" },
+                    { name: "Dumbbell Rows", sets: "4 sets x 12 reps" },
+                    { name: "Shoulder Press", sets: "3 sets x 15 reps" },
+                    { name: "Tricep Kickbacks", sets: "3 sets x 15 reps" },
+                    { name: "Bicep Curls", sets: "3 sets x 15 reps" }
+                ]},
+                Wednesday: { title: "Core & Cardio", duration: "50 min", exercises: [
+                    { name: "Plank", sets: "4 sets x 45 sec" },
+                    { name: "Bicycle Crunches", sets: "4 sets x 30 reps" },
+                    { name: "Russian Twists", sets: "3 sets x 25 reps" },
+                    { name: "Running", sets: "20 minutes" },
+                    { name: "Jumping Jacks", sets: "3 sets x 50 reps" }
+                ]},
+                Thursday: { title: "Lower Body Focus", duration: "65 min", exercises: [
+                    { name: "Deadlifts", sets: "4 sets x 10 reps" },
+                    { name: "Leg Press", sets: "4 sets x 15 reps" },
+                    { name: "Bulgarian Split Squats", sets: "3 sets x 12 reps" },
+                    { name: "Calf Raises", sets: "4 sets x 20 reps" },
+                    { name: "Step Ups", sets: "3 sets x 15 reps" }
+                ]},
+                Friday: { title: "Full Body Sculpt", duration: "60 min", exercises: [
+                    { name: "Kettlebell Swings", sets: "4 sets x 20 reps" },
+                    { name: "Goblet Squats", sets: "4 sets x 15 reps" },
+                    { name: "Renegade Rows", sets: "3 sets x 12 reps" },
+                    { name: "Burpees", sets: "3 sets x 10 reps" },
+                    { name: "Wall Sit", sets: "3 sets x 1 min" }
+                ]},
+                Saturday: { title: "HIIT & Abs", duration: "45 min", exercises: [
+                    { name: "High Knees", sets: "4 sets x 1 min" },
+                    { name: "Mountain Climbers", sets: "4 sets x 30 reps" },
+                    { name: "Leg Raises", sets: "4 sets x 20 reps" },
+                    { name: "Side Plank", sets: "3 sets x 45 sec" },
+                    { name: "Box Jumps", sets: "3 sets x 12 reps" }
+                ]},
+                Sunday: { title: "Yoga & Stretching", duration: "40 min", exercises: [
+                    { name: "Sun Salutation", sets: "10 rounds" },
+                    { name: "Warrior Pose", sets: "3 sets x 1 min" },
+                    { name: "Pigeon Pose", sets: "2 min each side" },
+                    { name: "Child's Pose", sets: "3 min" },
+                    { name: "Meditation", sets: "10 min" }
+                ]}
+            }
+        };
+        
+        let currentGender = 'boys';
+        let currentDay = 'Monday';
+        
+        // Initialize
+        function init() {
+            renderDays();
+            renderWorkout();
+            renderChart();
+        }
+        
+        function renderDays() {
+            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            const fullDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+            const container = document.getElementById('daySelector');
+            container.innerHTML = days.map((day, i) => `
+                <button class="day-btn ${fullDays[i] === currentDay ? 'active' : ''}" onclick="selectDay('${fullDays[i]}')">
+                    <div class="text-xs mb-1">${day}</div>
+                    <div class="font-bold">${i + 1}</div>
+                </button>
+            `).join('');
+        }
+        
+        function selectGender(gender, btn) {
+            currentGender = gender;
+            document.querySelectorAll('.gender-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderWorkout();
+        }
+        
+        function selectDay(day) {
+            currentDay = day;
+            renderDays();
+            renderWorkout();
+        }
+        
+        function renderWorkout() {
+            const workout = workoutPlans[currentGender][currentDay];
+            document.getElementById('workoutTitle').textContent = `${currentDay}: ${workout.title}`;
+            document.getElementById('workoutSubtitle').textContent = currentGender === 'boys' ? 'Build strength & muscle' : 'Tone & sculpt your body';
+            document.getElementById('workoutDuration').textContent = workout.duration;
+            
+            document.getElementById('exerciseList').innerHTML = workout.exercises.map((ex, i) => `
+                <div class="flex justify-between items-center p-4 bg-white/5 rounded-lg hover:bg-white/10 transition">
+                    <div class="flex items-center gap-4">
+                        <span class="w-8 h-8 rounded-full bg-gradient-to-r from-purple-500 to-cyan-500 flex items-center justify-center text-sm font-bold">${i + 1}</span>
+                        <span class="font-medium">${ex.name}</span>
+                    </div>
+                    <span class="text-gray-400 text-sm">${ex.sets}</span>
+                </div>
+            `).join('');
+        }
+        
+        function startWorkout() {
+            if (!localStorage.getItem('user')) {
+                openModal('login');
+                return;
+            }
+            alert(`Starting ${currentDay} workout! Let's crush it! 💪`);
+        }
+        
+        // Auth Functions
+        function openModal(type) {
+            document.getElementById('authModal').classList.add('active');
+            toggleAuth(type);
+        }
+        
+        function closeModal() {
+            document.getElementById('authModal').classList.remove('active');
+        }
+        
+        function toggleAuth(type) {
+            document.getElementById('loginForm').style.display = type === 'login' ? 'block' : 'none';
+            document.getElementById('signupForm').style.display = type === 'signup' ? 'block' : 'none';
+        }
+        
+        function signup() {
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            const gender = document.getElementById('signupGender').value;
+            
+            if (!name || !email || !password || !gender) {
+                alert('Please fill all fields');
+                return;
+            }
+            
+            const user = { name, email, gender, stats: [] };
+            localStorage.setItem('user', JSON.stringify(user));
+            alert('Account created! Welcome to the journey!');
+            closeModal();
+            updateUI();
+        }
+        
+        function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            // Simple check - in real app, verify with backend
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (user && user.email === email) {
+                alert(`Welcome back, ${user.name}!`);
+                closeModal();
+                updateUI();
+            } else {
+                alert('Invalid credentials');
+            }
+        }
+        
+        function updateUI() {
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (user) {
+                // Update UI for logged in user
+                document.querySelector('nav button').textContent = user.name;
+            }
+        }
+        
+        // Stats Functions
+        function saveStats() {
+            if (!localStorage.getItem('user')) {
+                openModal('login');
+                return;
+            }
+            
+            const weight = document.getElementById('weightInput').value;
+            const fat = document.getElementById('fatInput').value;
+            const muscle = document.getElementById('muscleInput').value;
+            
+            if (!weight || !fat || !muscle) {
+                alert('Please fill all fields');
+                return;
+            }
+            
+            const user = JSON.parse(localStorage.getItem('user'));
+            user.stats.push({
+                date: new Date().toLocaleDateString(),
+                weight, fat, muscle
+            });
+            localStorage.setItem('user', JSON.stringify(user));
+            
+            alert('Progress saved! Keep grinding! 💪');
+            renderChart();
+        }
+        
+        function renderChart() {
+            const container = document.getElementById('chartContainer');
+            const heights = [40, 65, 45, 80, 55, 90, 70, 85, 60, 95];
+            container.innerHTML = heights.map((h, i) => `
+                <div class="flex-1 bg-gradient-to-t from-purple-500/50 to-cyan-500/50 rounded-t-lg transition-all hover:opacity-80" 
+                     style="height: ${h}%; animation: grow 0.5s ${i * 0.1}s forwards;">
+                </div>
+            `).join('');
+        }
+        
+        // Close modal on outside click
+        document.getElementById('authModal').addEventListener('click', (e) => {
+            if (e.target.id === 'authModal') closeModal();
+        });
+        
+        // Initialize
+        init();
+        updateUI();
+        
+        // Animate progress rings
+        setTimeout(() => {
+            document.getElementById('progress1').style.strokeDashoffset = '100';
+        }, 1000);
+    </script>
+</body>
+</html>
